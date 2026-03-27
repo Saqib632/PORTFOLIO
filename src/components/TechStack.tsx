@@ -13,7 +13,7 @@ import {
 
 const textureLoader = new THREE.TextureLoader();
 const imageUrls = [
-  "/images/react2.webp",
+  "/images/next.webp",
   "/images/next2.webp",
   "/images/node2.webp",
   "/images/express.webp",
@@ -22,7 +22,11 @@ const imageUrls = [
   "/images/typescript.webp",
   "/images/javascript.webp",
 ];
-const textures = imageUrls.map((url) => textureLoader.load(url));
+const textures = imageUrls.map((url) => {
+  const texture = textureLoader.load(url);
+  texture.colorSpace = THREE.SRGBColorSpace;
+  return texture;
+});
 
 const sphereGeometry = new THREE.SphereGeometry(1, 28, 28);
 
@@ -49,9 +53,10 @@ function SphereGeo({
 
   useFrame((_state, delta) => {
     if (!isActive) return;
+    if (!api.current) return;
     delta = Math.min(0.1, delta);
     const impulse = vec
-      .copy(api.current!.translation())
+      .copy(api.current.translation())
       .normalize()
       .multiply(
         new THREE.Vector3(
@@ -129,39 +134,57 @@ const TechStack = () => {
 
   useEffect(() => {
     const handleScroll = () => {
+      const workSection = document.getElementById("work");
+      if (!workSection) {
+        setIsActive(false);
+        return;
+      }
+
+      const sectionTop =
+        workSection.getBoundingClientRect().top +
+        (window.scrollY || document.documentElement.scrollTop);
       const scrollY = window.scrollY || document.documentElement.scrollTop;
-      const threshold = document
-        .getElementById("work")!
-        .getBoundingClientRect().top;
-      setIsActive(scrollY > threshold);
+      setIsActive(scrollY >= sectionTop - window.innerHeight / 2);
     };
-    document.querySelectorAll(".header a").forEach((elem) => {
+
+    const headerLinks = Array.from(document.querySelectorAll(".header a"));
+    const onHeaderClick = () => {
+      const interval = setInterval(() => {
+        handleScroll();
+      }, 10);
+      setTimeout(() => {
+        clearInterval(interval);
+      }, 1000);
+    };
+
+    headerLinks.forEach((elem) => {
       const element = elem as HTMLAnchorElement;
-      element.addEventListener("click", () => {
-        const interval = setInterval(() => {
-          handleScroll();
-        }, 10);
-        setTimeout(() => {
-          clearInterval(interval);
-        }, 1000);
-      });
+      element.addEventListener("click", onHeaderClick);
     });
+
+    handleScroll();
     window.addEventListener("scroll", handleScroll);
+
     return () => {
       window.removeEventListener("scroll", handleScroll);
+      headerLinks.forEach((elem) => {
+        const element = elem as HTMLAnchorElement;
+        element.removeEventListener("click", onHeaderClick);
+      });
     };
   }, []);
   const materials = useMemo(() => {
     return textures.map(
       (texture) =>
         new THREE.MeshPhysicalMaterial({
+          color: "#ffffff",
           map: texture,
           emissive: "#ffffff",
           emissiveMap: texture,
-          emissiveIntensity: 0.3,
-          metalness: 0.5,
-          roughness: 1,
-          clearcoat: 0.1,
+          emissiveIntensity: 0.2,
+          metalness: 0.15,
+          roughness: 0.45,
+          clearcoat: 0.15,
         })
     );
   }, []);

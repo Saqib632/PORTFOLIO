@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import HoverLinks from "./HoverLinks";
 import { gsap } from "gsap";
@@ -9,6 +9,8 @@ gsap.registerPlugin(ScrollSmoother, ScrollTrigger);
 export let smoother: ScrollSmoother;
 
 const Navbar = () => {
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+
   useEffect(() => {
     smoother = ScrollSmoother.create({
       wrapper: "#smooth-wrapper",
@@ -33,26 +35,53 @@ const Navbar = () => {
           let section = elem.getAttribute("data-href");
           smoother.scrollTo(section, true, "top top");
         }
+
+        if (window.innerWidth <= 768) {
+          setIsMenuOpen(false);
+        }
       });
     });
-    window.addEventListener("resize", () => {
+
+    const resizeHandler = () => {
       ScrollSmoother.refresh(true);
-    });
+      if (window.innerWidth > 768) {
+        setIsMenuOpen(false);
+      }
+    };
+
+    window.addEventListener("resize", resizeHandler);
+
+    return () => {
+      window.removeEventListener("resize", resizeHandler);
+    };
   }, []);
   return (
     <>
       <div className="header">
         <a href="/#" className="navbar-title" data-cursor="disable">
-          Logo
+          M Saqib Jadoon
         </a>
         <a
-          href="mailto:example@mail.com"
+          href="https://mail.google.com/mail/?view=cm&fs=1&to=saqibiot@gmail.com"
           className="navbar-connect"
+          target="_blank"
+          rel="noopener noreferrer"
           data-cursor="disable"
         >
-          example@mail.com
+          saqibiot@gmail.com
         </a>
-        <ul>
+        <button
+          className={`menu-toggle ${isMenuOpen ? "active" : ""}`}
+          aria-label="Toggle navigation menu"
+          aria-expanded={isMenuOpen}
+          onClick={() => setIsMenuOpen((prev) => !prev)}
+          type="button"
+        >
+          <span></span>
+          <span></span>
+          <span></span>
+        </button>
+        <ul className={isMenuOpen ? "nav-open" : ""}>
           <li>
             <a data-href="#about" href="#about">
               <HoverLinks text="ABOUT" />

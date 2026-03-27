@@ -6,9 +6,14 @@ const About = () => {
       <div className="about-me">
         <h3 className="title">About Me</h3>
         <p className="para">
-          Lorem ipsum dolor sit amet consectetur adipisicing elit. Hic quis
-          dolores numquam iusto Ratione earum ducimus autem id iure pariatur
-          dolorum quae maiores.
+          I am a passionate Full Stack Developer with a strong focus on
+          frontend development using React, Next.js, and modern web
+          technologies. I have completed multiple internships where I worked on
+          real-world projects and built responsive, user-friendly applications.
+          I have developed projects like PhishNet AI and XtreameSkills, gaining
+          hands-on experience in both frontend and basic backend development. I
+          am continuously learning and exploring Artificial Intelligence to
+          build smarter, scalable, and impactful applications.
         </p>
       </div>
     </div>

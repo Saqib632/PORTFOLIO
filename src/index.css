@@ -92,23 +92,37 @@ body {
 }
 
 .techstack {
-  width: 100%;
+  width: var(--cWidth);
+  max-width: var(--cMaxWidth);
   position: relative;
-  height: var(--vh);
+  min-height: var(--vh);
+  height: auto;
   margin: auto;
-  margin-top: 50px;
-  margin-bottom: -100px;
+  margin-top: 20px;
+  margin-bottom: 0;
+  padding: 60px 0 0;
+  box-sizing: border-box;
+  overflow: hidden;
+  z-index: 2;
+  background-color: var(--backgroundColor);
 }
 
 .techstack h2 {
-  font-size: 80px;
+  font-size: clamp(36px, 7vw, 80px);
   text-align: center;
-  position: absolute;
+  position: relative;
   width: 100%;
-  top: 120px;
-  left: 0;
+  margin-top: 0;
+  margin-bottom: clamp(36px, 8vh, 120px);
   font-weight: 400;
   text-transform: uppercase;
+}
+
+.tech-canvas {
+  width: 100% !important;
+  height: min(62vh, 680px) !important;
+  min-height: 320px;
+  display: block;
 }
 
 @media screen and (min-width: 768px) {
@@ -117,7 +131,16 @@ body {
   }
 }
 @media screen and (max-width: 900px) {
+  .techstack {
+    width: 100%;
+    padding-left: 0;
+    padding-right: 0;
+  }
   .techstack h2 {
-    font-size: 40px;
+    letter-spacing: 1px;
+  }
+  .tech-canvas {
+    height: min(52vh, 460px) !important;
+    min-height: 260px;
   }
 }

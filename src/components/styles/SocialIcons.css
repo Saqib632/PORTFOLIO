@@ -43,13 +43,17 @@
   will-change: left, top;
   transition: transform 0.3s ease-out;
 }
-.resume-button {
+.resume-actions {
   position: absolute;
   z-index: 99;
-  display: flex;
-  gap: 5px;
   bottom: 40px;
   right: 0;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.resume-button {
   width: auto;
   text-wrap: nowrap;
   letter-spacing: 4px;
@@ -59,18 +63,29 @@
   color: #5e5e5e;
   cursor: pointer;
   transition: 0.5s;
-  transform-origin: left bottom;
-  transform: translateX(100%) rotateZ(-90deg);
 }
+
 .resume-button:hover {
   color: #fff;
 }
-div.resume-button span {
-  color: #fff;
-  font-size: 17px;
-  margin-top: -1px;
+
+.resume-download {
+  width: 36px;
+  height: 36px;
+  border: 1px solid #b9a1ea;
+  border-radius: 50%;
+  color: #b9a1ea;
   display: flex;
   align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  transition: 0.3s;
+}
+
+.resume-download:hover {
+  border-color: #fff;
+  color: #fff;
+  transform: translateY(-1px);
 }
 .check-line {
   position: fixed;
@@ -90,14 +105,20 @@ div.resume-button span {
     font-size: 28px;
   }
 }
+@media only screen and (max-width: 900px) {
+  .icons-section {
+    display: none;
+  }
+}
 @media only screen and (min-width: 768px) {
   .resume-button {
-    transform: none;
     font-size: 20px;
     line-height: 20px;
   }
-  div.resume-button span {
+
+  .resume-download {
+    width: 40px;
+    height: 40px;
     font-size: 23px;
-    margin-top: -1.5px;
   }
 }

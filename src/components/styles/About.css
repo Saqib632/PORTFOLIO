@@ -12,11 +12,11 @@
 .about-me {
   padding: 50px 0px;
   padding-bottom: 0;
-  width: 500px;
+  width: min(500px, 100%);
   max-width: calc(100% - 15px);
 }
 .about-me h3 {
-  font-size: 25px;
+  font-size: clamp(20px, 3vw, 25px);
   text-transform: uppercase;
   letter-spacing: 7px;
   font-weight: 400;
@@ -24,9 +24,9 @@
 }
 
 .about-me p {
-  font-size: 33px;
+  font-size: clamp(20px, 4.8vw, 33px);
   font-weight: 600;
-  line-height: 36px;
+  line-height: 1.2;
   letter-spacing: 1px;
 }
 

@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Saqib Resume</title>
+    <style>
+      :root {
+        color-scheme: light;
+      }
+      body {
+        margin: 0;
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        background: #f5f7fb;
+        color: #111827;
+      }
+      .container {
+        max-width: 900px;
+        margin: 24px auto;
+        background: #ffffff;
+        border: 1px solid #e5e7eb;
+        border-radius: 12px;
+        padding: 20px;
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+      }
+      .status {
+        margin: 0 0 16px;
+        font-size: 14px;
+        color: #4b5563;
+      }
+      #resume-content {
+        line-height: 1.5;
+      }
+      @media (max-width: 768px) {
+        .container {
+          margin: 10px;
+          padding: 14px;
+          border-radius: 10px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <main class="container">
+      <p id="status" class="status">Loading resume...</p>
+      <article id="resume-content" aria-live="polite"></article>
+    </main>
+
+    <script src="https://unpkg.com/mammoth/mammoth.browser.min.js"></script>
+    <script>
+      (async function loadResume() {
+        const status = document.getElementById("status");
+        const content = document.getElementById("resume-content");
+
+        try {
+          const response = await fetch("/Resume/M%20Saqib%20Resume.docx", {
+            cache: "no-cache",
+          });
+
+          if (!response.ok) {
+            throw new Error("Resume file could not be loaded.");
+          }
+
+          const arrayBuffer = await response.arrayBuffer();
+          const result = await mammoth.convertToHtml({ arrayBuffer: arrayBuffer });
+
+          content.innerHTML = result.value;
+          status.textContent = "Resume preview";
+        } catch (error) {
+          status.textContent =
+            "Could not preview the resume. Please try again or upload a PDF for best browser preview support.";
+          content.innerHTML = "";
+          console.error(error);
+        }
+      })();
+    </script>
+  </body>
+</html>

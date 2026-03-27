@@ -1,75 +1,145 @@
 import "./styles/Work.css";
 import WorkImage from "./WorkImage";
+import { useRef } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useGSAP } from "@gsap/react";
 
-gsap.registerPlugin(useGSAP);
+gsap.registerPlugin(useGSAP, ScrollTrigger);
+
+const projects = [
+  {
+    image: "/images/xtreame.jpg",
+    alt: "XtremeSkills",
+    title: "XtremeSkills",
+    category: "Frontend",
+  },
+  {
+    image: "/images/caps.jpg",
+    alt: "CAPS",
+    title: "CAPS",
+    category: "Fullstack",
+  },
+  {
+    image: "/images/shake.jpg",
+    alt: "Sheikh Maltoon Hospital",
+    title: "Sheikh Maltoon Hospital",
+    category: "Frontend",
+  },
+  {
+    image: "/images/cys.jpg",
+    alt: "Phishing Link Detector ",
+    title: "Phishing Link Detector",
+    category: "Fullstack",
+  },
+  {
+    image: "/images/nexus.jpg",
+    alt: "NexusCare",
+    title: "NexusCare",
+    category: "Fullstack",
+  },
+  {
+    image: "/images/app.jpg",
+    alt: "E-commerce App",
+    title: "E-commerce App",
+    category: "Frontend",
+  },
+    {
+    image: "/images/Fashion.jpg",
+    alt: "Fashion Store App",
+    title: "Fashion Store App",
+    category: "Frontend",
+  },
+];
 
 const Work = () => {
-  useGSAP(() => {
-  let translateX: number = 0;
+  const scrollRef = useRef<HTMLDivElement | null>(null);
+  const trackRef = useRef<HTMLDivElement | null>(null);
+  const sectionRef = useRef<HTMLDivElement | null>(null);
 
-  function setTranslateX() {
-    const box = document.getElementsByClassName("work-box");
-    const rectLeft = document
-      .querySelector(".work-container")!
-      .getBoundingClientRect().left;
-    const rect = box[0].getBoundingClientRect();
-    const parentWidth = box[0].parentElement!.getBoundingClientRect().width;
-    let padding: number =
-      parseInt(window.getComputedStyle(box[0]).padding) / 2;
-    translateX = rect.width * box.length - (rectLeft + parentWidth) + padding;
-  }
+  useGSAP(
+    () => {
+      const section = sectionRef.current;
+      const viewport = scrollRef.current;
+      const track = trackRef.current;
 
-  setTranslateX();
+      if (!section || !viewport || !track) return;
 
-  let timeline = gsap.timeline({
-    scrollTrigger: {
-      trigger: ".work-section",
-      start: "top top",
-      end: `+=${translateX}`, // Use actual scroll width
-      scrub: true,
-      pin: true,
-      id: "work",
+      let maxX = 0;
+
+      const calculateDistance = () => {
+        maxX = Math.max(0, track.scrollWidth - viewport.clientWidth);
+      };
+
+      calculateDistance();
+
+      if (maxX <= 0) {
+        gsap.set(track, { x: 0 });
+        return;
+      }
+
+      const tween = gsap.to(track, {
+        x: () => {
+          calculateDistance();
+          return -maxX;
+        },
+        ease: "none",
+        scrollTrigger: {
+          id: "work-horizontal",
+          trigger: section,
+          start: "top top",
+          end: () => {
+            calculateDistance();
+            return `+=${maxX}`;
+          },
+          scrub: true,
+          pin: true,
+          anticipatePin: 1,
+          invalidateOnRefresh: true,
+        },
+      });
+
+      const onRefreshInit = () => calculateDistance();
+      ScrollTrigger.addEventListener("refreshInit", onRefreshInit);
+
+      return () => {
+        ScrollTrigger.removeEventListener("refreshInit", onRefreshInit);
+        tween.scrollTrigger?.kill();
+        tween.kill();
+        gsap.set(track, { clearProps: "x" });
+      };
     },
-  });
+    { scope: sectionRef }
+  );
 
-  timeline.to(".work-flex", {
-    x: -translateX,
-    ease: "none",
-  });
-
-  // Clean up (optional, good practice)
-  return () => {
-    timeline.kill();
-    ScrollTrigger.getById("work")?.kill();
-  };
-}, []);
   return (
-    <div className="work-section" id="work">
+    <div className="work-section" id="work" ref={sectionRef}>
       <div className="work-container section-container">
         <h2>
           My <span>Work</span>
         </h2>
-        <div className="work-flex">
-          {[...Array(6)].map((_value, index) => (
-            <div className="work-box" key={index}>
-              <div className="work-info">
-                <div className="work-title">
-                  <h3>0{index + 1}</h3>
+        <div className="work-scroll" data-cursor="disable" ref={scrollRef}>
+          <div className="work-flex" ref={trackRef}>
+            {projects.map((project, index) => (
+              <div className="work-box" key={index}>
+                <WorkImage
+                  image={project.image}
+                  alt={project.alt}
+                  loading={index < 2 ? "eager" : "lazy"}
+                />
+                <div className="work-info">
+                  <div className="work-title">
+                    <h3>{String(index + 1).padStart(2, "0")}</h3>
 
-                  <div>
-                    <h4>Project Name</h4>
-                    <p>Category</p>
+                    <div>
+                      <h4>{project.title}</h4>
+                      <p>{project.category}</p>
+                    </div>
                   </div>
                 </div>
-                <h4>Tools and features</h4>
-                <p>Javascript, TypeScript, React, Threejs</p>
               </div>
-              <WorkImage image="/images/placeholder.webp" alt="" />
-            </div>
-          ))}
+            ))}
+          </div>
         </div>
       </div>
     </div>
