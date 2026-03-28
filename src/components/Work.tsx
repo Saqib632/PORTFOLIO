@@ -77,8 +77,7 @@ const Work = () => {
         gsap.set(track, { x: 0 });
         return;
       }
-
-      const tween = gsap.to(track, {
+     const tween = gsap.to(track, {
         x: () => {
           calculateDistance();
           return -maxX;
