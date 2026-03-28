@@ -11,22 +11,54 @@ import {
   RapierRigidBody,
 } from "@react-three/rapier";
 
-const textureLoader = new THREE.TextureLoader();
 const imageUrls = [
-  "/images/next.webp",
-  "/images/next2.webp",
-  "/images/node2.webp",
-  "/images/express.webp",
-  "/images/mongo.webp",
-  "/images/mysql.webp",
-  "/images/typescript.webp",
-  "/images/javascript.webp",
+  "/images/tech/nextjs.svg",
+  "/images/tech/react.svg",
+  "/images/tech/nodejs.svg",
+  "/images/tech/express.svg",
+  "/images/tech/mongodb.svg",
+  "/images/tech/mysql.svg",
+  "/images/tech/typescript.svg",
+  "/images/tech/javascript.svg",
 ];
-const textures = imageUrls.map((url) => {
-  const texture = textureLoader.load(url);
+
+function createWhiteLogoTexture(url: string) {
+  const size = 1024;
+  const logoSize = Math.floor(size * 0.28);
+  const canvas = document.createElement("canvas");
+  canvas.width = size;
+  canvas.height = size;
+  const ctx = canvas.getContext("2d");
+
+  if (!ctx) {
+    const fallback = new THREE.Texture();
+    fallback.colorSpace = THREE.SRGBColorSpace;
+    return fallback;
+  }
+
+  const paintBase = () => {
+    ctx.clearRect(0, 0, size, size);
+    ctx.fillStyle = "#ffffff";
+    ctx.fillRect(0, 0, size, size);
+  };
+
+  paintBase();
+
+  const texture = new THREE.CanvasTexture(canvas);
   texture.colorSpace = THREE.SRGBColorSpace;
+
+  const logo = new Image();
+  logo.onload = () => {
+    paintBase();
+    const x = (size - logoSize) / 2;
+    const y = (size - logoSize) / 2;
+    ctx.drawImage(logo, x, y, logoSize, logoSize);
+    texture.needsUpdate = true;
+  };
+  logo.src = url;
+
   return texture;
-});
+}
 
 const sphereGeometry = new THREE.SphereGeometry(1, 28, 28);
 
@@ -174,14 +206,13 @@ const TechStack = () => {
     };
   }, []);
   const materials = useMemo(() => {
-    return textures.map(
-      (texture) =>
+    return imageUrls.map(
+      (url) =>
         new THREE.MeshPhysicalMaterial({
           color: "#ffffff",
-          map: texture,
-          emissive: "#ffffff",
-          emissiveMap: texture,
-          emissiveIntensity: 0.2,
+          map: createWhiteLogoTexture(url),
+          emissive: "#1f1f1f",
+          emissiveIntensity: 0.06,
           metalness: 0.15,
           roughness: 0.45,
           clearcoat: 0.15,
@@ -216,7 +247,7 @@ const TechStack = () => {
             <SphereGeo
               key={i}
               {...props}
-              material={materials[Math.floor(Math.random() * materials.length)]}
+              material={materials[i % materials.length]}
               isActive={isActive}
             />
           ))}
